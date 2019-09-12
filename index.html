@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="./libraries/vue.js"></script>
+  <script src="./libraries/plotly.min.js"></script>
+  <script src="./libraries/p5.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="normalize.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <div id="root">
+
+      <div id="title">
+        <h1>Climate Toy</h1>
+        <h3>An explorable toy model of Earth's climate</h3>
+      </div>
+
+
+      <h2>Building a Toy Model</h2>
+
+      <p>The higher a planet’s temperature, the more heat it radiates out into space. Here’s a graph representing this fact — let’s call this a planetary heat curve.</p>
+
+      <graph :maxtemp="255"></graph>
+
+      <p>For now, picture each planet as sitting somewhere along this curve. Hotter planets would sit further to the right, colder ones to the left.</p>
+
+      <p>The graph shows us how intensely the planet radiates heat (measured in Watts per square meter) on the vertical axis, versus the planet's average temperature on the horizontal axis (measured in Kelvin). The hotter the planet, <a href="https://rateofchange.substack.com/p/dark-heat-and-earths-energy-imbalance">the more intensely it radiates heat</a>. The curve follows a well-known <a href="https://en.wikipedia.org/wiki/Stefan%E2%80%93Boltzmann_law">law of heat flow</a>.</p>
+
+      <p>We can use this curve to predict the temperature of a planet. Let's try Mars first.</p>
+
+      <p>We know that Mars receives <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">about 110 W/m²</a> of solar energy. So let's draw a horizontal line at 110 W/m².</p>
+
+      <graph :maxtemp="255" :solarflux="110"></graph>
+
+      <p>In the graph above, the yellow line represents the solar energy flowing in to the planet. The purple line represents the heat energy flowing out of the planet.</p>
+
+      <p>There's something special about the point where the line meets the curve. Take a look at this simulation. (<i>Solar flux</i> refers to the incoming solar energy flow, and <i>heat flux</i> refers to the outgoing heat energy flow.)</p>
+
+      <iframe src="./temperaturecurveinteractive" style="width: 600px; height: 320px; margin: 10px 50px;"></iframe>
+
+      <p><b>Drag the planet to a different temperature</b> and see what happens.</br> (right = hotter, left = colder)</p>
+
+      <p>See how the planet always ends up at the point where the two curves intersect? Why does this happen?</p>
+
+      <p>When the planet is further above the point of intersection, its heat flux exceeds the solar flux. This means it loses more heat that it receives from the Sun. So, it'll start to cool down.</p>
+
+      <p>Similarly, when the planet is below the point of intersection, the solar flux exceeds its heat flux. Now, it gains more heat from the Sun than it can shed as heat, and so it starts to warm up.</p>
+
+      <p>Once the planet reaches the intersection point, the solar and heat flux exactly balance. At this special point, where the two curves meet, the planet's temperature remains steady. So this intersection point gives us a way to predict a planet's temperature. </p>
+
+      <p>So here's that graph again.</p>
+
+      <graph :maxtemp="255" :solarflux="110"></graph>
+
+      <p>Go ahead and use this to predict Mars's temperature. You can drag over any region of the graph to zoom in. If you end up zooming too far, press the autoscale button on the top right.</p>
+
+      <p>I predict that Mars's temperature will be: <input v-model.number="marstemp" debounce="500" style="width:40px"> K.</p>
+
+      <div v-if="marstemp > 0">
+
+        <div v-if="Math.round(marstemp) < 210">
+          <p>Hmm... that seems a bit low. Try again? (Remember, you can zoom in.)</p>
+        </div>
+
+        <div v-else-if="Math.round(marstemp) > 210">
+          <p>That looks a bit on the high side. Give it another go? (Remember, you can zoom in.)</p>
+        </div>
+
+        <div v-else>
+
+          <p>Great job! You predicted Mars's average temperature to be 210 Kelvin, which is -63°C (or -82°F). Now let's see how our prediction turned out.</p>
+
+          <p>In the graph below, the dot shows the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"><i>actual value</i></a> of Mars's temperature.</p>
+
+          <graph :maxtemp="255" :solarflux="110" :planets="planets"></graph>
+
+          <p>We nailed it! Mars's temperature lines up closely with our prediction.</p>
+
+          <h2>What about Earth?</h2>
+
+          <p>Emboldened by this success, let's try Earth next. We know that Earth receives 240 W/m² of solar energy. So once again, let's draw a horizontal line at that value.</p>
+
+          <graph :maxtemp="305" :solarflux="240" ></graph>
+
+          <p>Just as before, the intersection point gives us a prediction for Earth's temperature.</p>
+
+          <p>I predict that Earth's temperature will be: <input v-model.number="earthtemp" debounce="500" style="width:40px"> K.</p>
+
+          <div v-if="earthtemp > 0">
+
+            <div v-if="Math.round(earthtemp) < 255">
+              <p>Hmm... that seems a bit low. Try again? (If you need, you can drag over a region of the graph to zoom in.)</p>
+            </div>
+
+            <div v-else-if="Math.round(earthtemp) > 255">
+              <p>That looks a bit on the high side. Give it another go? (If you need, you can drag over a region of the graph to zoom in.)</p>
+            </div>
+
+            <div v-else>
+
+              <p>Nice going! You found that the two curves intersect at around 255 Kelvin, which is about -18°C (or 0°F).</p>
+
+              <p>How did we do? The graph below shows the observed temperatures of Earth and Mars.</p>
+
+              <graph :maxtemp="305" :solarflux="240" :planets="planets"></graph>
+
+              <p>While our prediction for Mars's temperature was right on target, we're badly off the mark with Earth's temperature.</p>
+
+              <p>This is because we've neglected to account for the greenhouse effect. While this assumption works well for Mars, with its very thin atmosphere, it doesn't work at all for Earth. Earth is much warmer than a rock with no atmosphere, which is why it sits further to the right in the graph.</p>
+
+              <p>The temperature difference between Earth's observed temperature and our prediction is 33°C – that's how far to the right the dot lies from the intersection point. The reason for this difference is our greenhouse effect.</p>
+
+              <h2>Improving the Model</h2>
+
+              <p>The good news is, we can easily fix our planetary heat curve to account for the greenhouse effect. The greenhouse effect reduces the flow of heat from the Earth to space, similar to how a partially clogged drain reduces the flow of water. In essence, the greenhouse effect <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">clogs Earth’s ‘heat drain’</a>.</p>
+
+              <p>The simplest way to model this would be to multiply our graph by a number between 0 and 1. Let’s call this number ϵ. This number represents how much of the planet's heat escapes to space.</p>
+
+              <p>If ϵ is 1, then all the planet's heat escapes to space. We've 'switched off' the greenhouse effect.</p>
+
+
+              <p>But as ϵ decreases, we start turning up the greenhouse effect, as more and more of the planet's heat is trapped by the atmosphere. We're clogging Earth's heat drain.</p>
+
+              <p>Here, go ahead and try it for yourself.</p>
+
+              <p>Use the slider to tune the value of ϵ so that the planetary heat curve lines up with Earth's actual temperature. (For fine tuning, you can click the +/- buttons or edit the number in the input box.)</p>
+
+              <p><input type="range" min="0" max="1" step="0.005" v-model.number="e" debounce="500"></input> <button @click="e -= 0.005">-</button> <button @click="e += 0.005">+</button>  <input v-model.number="e" style="width:40px"></p>
+
+              <p>Fraction of heat escaping through the atmosphere: {{Math.round(1000 * e)/10}}%</p>
+              <graph :maxtemp="350" :e="e" :planets="planets"></graph>
+
+
+              <div v-if="e > 0 && e < 1">
+
+                <div v-if="e <= 0.61 || e >= 0.62">
+                  <p>Hmm.. see if you can get it to line up more closely. Tip: for greater precision, zoom in to the region around Earth on the graph.</p>
+                </div>
+
+                <div v-else>
+
+                  <p>That looks great! You found that {{Math.round(1000 * e)/10}}% of Earth's heat makes it out to space, while the remaining {{Math.round(1000 - 1000 * e)/10}}% warms the planet further. This is in the same ballpark as other estimates <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">of</a> <a href="https://en.wikipedia.org/wiki/Climate_model#Zero-dimensional_models">this</a> <a href="https://www.stat.washington.edu/peter/Emissivity.html">number</a>.</p>
+
+                  <p>Now that you've tuned the heat curve for Earth, it no longer works for the other planets. You've customized this model for the Earth's greenhouse effect.</p>
+
+                  <p>So we've arrived at a simple climate model that accounts for Earth's greenhouse effect. This is a <a href="https://en.wikipedia.org/wiki/Toy_model">toy model</a>, meaning that it helps us build intuition, and gives us a foothold for understanding the basic principles involved. However, it's <i>way</i> less sophisticated than any “real world” climate model, and shouldn't be used to make any serious predictions.</p>
+
+                  <p>Using this model, we can take a stab at understanding Earth's climate sensitivity. The <b><a href="https://en.wikipedia.org/wiki/Climate_sensitivity">climate sensitivity</a></b> is how much Earth's temperature will increase if we double carbon dioxide levels.</p>
+
+                  <h2>Doubling CO₂ levels</h2>
+
+                  <p>So far, we've been considering Earth in its pre-industrial state. What happens when we add a massive amount of carbon dioxide into the mix?</p>
+
+                  <p>Climate scientists tell us that doubling the levels of CO₂ in our atmosphere will add 3.7 W/m² to our incoming energy flow. Because of this, the planet will no longer be in energy balance. Instead, there'd be more energy flowing into the Earth than escaping through heat, and so <a href="https://rateofchange.substack.com/p/dark-heat-and-earths-energy-imbalance">the planet will warm up</a>.</p>
+
+                  <p>As the planet warms, its outgoing heat flow also rises. Eventually, it'll settle into a new, warmer temperature, where the energy is in balance once again.</p>
+
+                  <p>To get a sense for how this works, <b>drag the incoming energy up or down</b> in the simulation below, and see how it affects the planet's temperature.</p>
+
+                  <iframe src="./temperaturecurveinteractive2" style="width: 600px; height: 320px; margin: 10px 50px;"></iframe>
+
+                  <p>Changing the incoming energy flow into a planet is a lot like adjusting a thermostat. Just as setting a thermostat ensures that your home will eventually reach a target temperature, by adding CO₂ and shifting Earth's energy balance, we're adjusting Earth's thermostat. It'll take some time for Earth's temperature to respond to this new setting.</p>
+
+                  <p>The big question is, exactly how much would doubling CO₂ levels eventually warm the Earth? Here's another way to ask the same question. If we a took an upwards step of 3.7 W/m² in this graph, how far to the right would we also end up? This rightwards shift – the resultant temperature rise – is our toy model's prediction for Earth's climate sensitivity.</p>
+
+                  <img src="sensitivity.png" alt="Climate Sensitivity" style="width: 600px; height: 320px; margin: 10px 50px;">
+
+                  <p>Try it out for yourself. Here's that graph of Earth's planetary heat curve. Go ahead and zoom in to the region of the graph in the immediate vicinity of Earth.</p>
+
+                  <graph :maxtemp="350" :e="e" :planets="planets"></graph>
+
+                  <p>Once you're sufficiently zoomed in, place your mouse over Earth and notice its temperature and energy flow. Then move your mouse up the curve to a point where the energy flow has risen by roughly 3.7 W/m².</p>
+
+                  <p>Once you get there, compare the temperature you find to your starting point. The rise in temperature is our prediction for Earth's climate sensitivity.</p>
+
+                  <p>Based on the graph, I find Earth's climate sensitivity to be: <input v-model.number="ecs" debounce="500" style="width:40px"> K.</p>
+
+                  <div v-if="ecs > 0">
+
+                    <div v-if="ecs < 1.1 || ecs > 1.2">
+                      <p>That's not quite right.. try again?</p>
+                    </div>
+
+                    <div v-else>
+
+                      <p>Excellent! Using this simple model, you predicted that Earth's climate sensitivity is about {{ecs}} K. Since differences in temperature are the same in the Kelvin and Celsius scale, this model is telling us that when we double CO₂ levels, Earth's temperature rises by roughly {{ecs}}°C.</p>
+
+                      <p>How does this prediction compare to what's already known?</p>
+
+                      <p>Climate scientists’ current <a href="https://en.wikipedia.org/wiki/Climate_sensitivity#Intergovernmental_Panel_on_Climate_Change">best estimates</a> tell us that the rise in temperature from a CO₂ doubling will be between 1.5 to 4.5°C. If we take the middle of this range, that’s 3°C.</p>
+
+                      <p>So we’ve underestimated Earth’s climate sensitivity by a fair amount. This might come as a disappointment after all that work.</p>
+
+                      <p>Indeed, if we look at the facts today, it seems clear that our prediction must be an underestimate. Even though we're currently about halfway to CO₂ doubling, average global temperatures have already risen by about a degree.</p>
+
+                      <p>However, we’ve still learnt something useful. We’ve shown that <i>if all else were to remain the same</i>, a doubling of carbon dioxide <i>would</i> lead to roughly 1°C of warming, which is a <a href="http://shadow.eas.gatech.edu/~kcobb/warming_papers/Hansen_etal_1984.pdf">very</a> <a href="https://en.wikipedia.org/wiki/Climate_sensitivity#Different_forms_of_climate_sensitivity">well</a> <a href="http://www.pik-potsdam.de/~stefan/Publications/Book_chapters/Rahmstorf_Zedillo_2008.pdf">known</a> <a href="http://www.atmos.albany.edu/facstaff/brose/classes/ATM623_Spring2015/Notes/Lectures/Lecture03%20--%20Climate%20sensitivity%20and%20feedback.html">result</a> (and it’s cool that we could reproduce it!)</p>
+
+                      <p>In reality, all else <b><i>doesn’t</i></b> remain the same.</p>
+
+                      <p>The reason our estimate is much lower than what climate scientists predict is that we’ve neglected all of the important feedbacks in Earth’s climate system!</p>
+
+                      <p>We assumed that an increase in CO₂ causes a rise in temperature, end of story. In reality, this temperature increase has further consequences, like an increase in water vapor in the air, or accelerating the melting of ice caps, or more clouds. And these changes then further alter Earth's energy imbalance. This is what we mean by <i><a href="https://en.wikipedia.org/wiki/Climate_change_feedback">climate feedbacks</a></i>, and it’s these feedbacks that complicate our story.</p>
+
+                      <p>In an upcoming newsletter, we’ll dig into the science of how feedbacks work, and improve our prediction by accounting for these feedbacks. Along the way, we’ll also understand why it’s so difficult to make highly precise climate predictions.</p>
+
+                      <p>If you found this post helpful, and you'd like to be the first to know when new interactives like this come out, subscribe to my <a href="https://rateofchange.substack.com/">climate newsletter</a>.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- page code -->
+  <script src="vue-components.js"></script>
+  <script src="vue-definitions.js"></script>
+
+</script>
+
+</body>
+</html>
