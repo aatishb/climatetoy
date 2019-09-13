@@ -127,7 +127,7 @@
 
               <p>Use the slider to tune the value of ϵ so that the planetary heat curve lines up with Earth's actual temperature. (For fine tuning, you can click the +/- buttons or edit the number in the input box.)</p>
 
-              <p><input type="range" min="0" max="1" step="0.005" v-model.number="e" debounce="500"></input> <button @click="e -= 0.005">-</button> <button @click="e += 0.005">+</button>  <input v-model.number="e" style="width:40px"></p>
+              <p style="text-align:center"><input type="range" min="0" max="1" step="0.005" v-model.number="e" debounce="500"></input> <button @click="e -= 0.005">-</button> <button @click="e += 0.005">+</button>  <input v-model.number="e" style="width:40px"></p>
 
               <p>Fraction of heat escaping through the atmosphere: {{Math.round(1000 * e)/10}}%</p>
               <graph :maxtemp="350" :e="e" :showplanets="true"></graph>
@@ -211,9 +211,17 @@
 
                       <p>It's as if whenever you raised the temperature on your thermostat by one degree, your house decided to turn it up a few degrees more. This is what we mean by <i><a href="https://en.wikipedia.org/wiki/Climate_change_feedback">climate feedbacks</a></i>, and it’s these feedbacks that complicate our story.</p>
 
-                      <p>In an upcoming newsletter, we’ll dig into the science of how feedbacks work, and improve our prediction by accounting for these feedbacks. Along the way, we’ll also understand why it’s so difficult to make highly precise climate predictions.</p>
+                      <p>In an upcoming post, we’ll dig into the science of how feedbacks work, and improve our prediction by accounting for these feedbacks. Along the way, we’ll also understand why it’s so difficult to make highly precise climate predictions.</p>
+
+                      <h2>Credits & References</h2>
+
+                      <p>Shout out to Shawn Cheeks for providing helpful feedback on this post. Any errors or omissions are mine alone.<p>
+
+                      <p>The code for this interactive is available on <a href="https://github.com/aatishb/climatetoy">Github</a>. This work is published under a Creative Commons <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> license, which means that you're welcome to republish or remix it for any non-commercial purposes, with attribution.</p>
 
                       <p>If you found this post helpful, and you'd like to be the first to know when new interactives like this come out, subscribe to my <a href="https://rateofchange.substack.com/">climate newsletter</a>.</p>
+
+                      <p>If you're interested in learning more about the science of climate change at a deeper level, I've learnt a ton from the online lectures and textbook by David Archer: <a href="http://forecast.uchicago.edu/lectures.html">Global Warming: Understanding the Forecast</a>. If you're more interested in understanding energy and how it plays in to the climate crisis, I highly recommend David MacKay's free online textbook <a href="http://withouthotair.com/">Sustainable Energy without the Hot Air</a>.</p>
                     </div>
                   </div>
                 </div>
