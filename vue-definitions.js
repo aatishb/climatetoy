@@ -58,12 +58,7 @@ Vue.component('graph', {
 
   props: {
 
-    planets: {
-      default: () => ([]),
-      type: Array
-    },
-
-    maxtemp: {
+   maxtemp: {
       default: 750,
       type: Number
     },
@@ -74,9 +69,14 @@ Vue.component('graph', {
     },
 
     solarflux: {
-      default: 0,
-      type: Number
+      default: () => ([]),
+      type: Array
     },
+
+    showplanets: {
+      default: false,
+      type: Boolean
+    }
 
   },
 
@@ -86,6 +86,20 @@ Vue.component('graph', {
     return {
 
       sigma: 5.67 * Math.pow(10, -8),
+
+      planets: [
+        {
+          name: 'Earth',
+          T: 288,  // https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+          solarflux: 240 // https://en.wikipedia.org/wiki/File:The-NASA-Earth%27s-Energy-Budget-Poster-Radiant-Energy-System-satellite-infrared-radiation-fluxes.jpg
+        },
+        {
+          name: 'Mars',
+          T: 210, // https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
+          solarflux: 110 // (irradiance * (1 - bond albedo))/4
+        },
+      ],
+
 
       layout:  {
 
@@ -118,7 +132,24 @@ Vue.component('graph', {
 
     makeGraph: function () {
       Plotly.newPlot(this.$refs.graph, this.plotData, this.layout);
-    }
+    },
+
+    solarcurve: function(planet) {
+
+      let solarflux = this.planets.filter(e => e.name == planet)[0].solarflux;
+
+      return {
+        name: 'Solar',
+        x: this.temp ,
+        y: this.temp.map(e => solarflux),
+        showlegend: false,
+        hovertemplate: 'Incoming Solar Energy Flow: %{y:.1f} W/m²',
+        line: {
+          color: 'rgb(255, 190, 137)',
+          width: 4
+        },
+      }
+    },
 
   },
 
@@ -129,7 +160,20 @@ Vue.component('graph', {
 
   computed: {
     plotData: function() {
-      return [this.solarcurve, this.heatcurve, this.planetdata];
+
+      let plots = [];
+
+      for(let planet of this.solarflux) {
+        plots.push(this.solarcurve(planet));
+      }
+
+      plots.push(this.heatcurve);
+
+      if(this.showplanets) {
+        plots.push(this.planetdata);
+      }
+
+      return plots;
     },
 
     temp: function() {
@@ -138,20 +182,6 @@ Vue.component('graph', {
 
     maxheat: function() {
       return this.sigma * Math.pow(this.maxtemp, 4);
-    },
-
-    solarcurve: function() {
-      return {
-        name: 'Solar',
-        x: this.solarflux > 0 ? this.temp : [],
-        y: this.solarflux > 0 ? this.temp.map(e => this.solarflux) : [],
-        showlegend: false,
-        hovertemplate: 'Incoming Solar Energy Flow: %{y:.1f} W/m²',
-        line: {
-          color: 'rgb(255, 190, 137)',
-          width: 4
-        },
-      }
     },
 
     heatcurve: function() {
@@ -204,33 +234,15 @@ Vue.component('graph', {
 })
 
 
-
-
 let app = new Vue({
 
   el: '#root',
 
   data: {
     e: 1,
-
     marstemp: 0,
-
     earthtemp: 0,
-
-    ecs: 0,
-
-    planets: [
-      {
-        name: 'Earth',
-        T: 288,  // https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
-        solarflux: 240 // https://en.wikipedia.org/wiki/File:The-NASA-Earth%27s-Energy-Budget-Poster-Radiant-Energy-System-satellite-infrared-radiation-fluxes.jpg
-      },
-      {
-        name: 'Mars',
-        T: 210, // https://nssdc.gsfc.nasa.gov/planetary/factsheet/index.html
-        solarflux: 110 // (irradiance * (1 - bond albedo))/4
-      },
-    ]
+    ecs: 0
   },
 
   methods: {

@@ -33,7 +33,7 @@
 
       <p>We know that Mars receives <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">about 110 W/m²</a> of solar energy. So let's draw a horizontal line at 110 W/m².</p>
 
-      <graph :maxtemp="255" :solarflux="110"></graph>
+      <graph :maxtemp="255" :solarflux="['Mars']"></graph>
 
       <p>In the graph above, the yellow line represents the solar energy flowing in to the planet. The purple line represents the heat energy flowing out of the planet.</p>
 
@@ -47,13 +47,13 @@
 
       <p>When the planet is further above the point of intersection, its heat flux exceeds the solar flux. This means it loses more heat that it receives from the Sun. So, it'll cool down.</p>
 
-      <p>Similarly, when the planet is below the point of intersection, the solar flux exceeds its heat flux. Now, it gains more heat from the Sun than it can shed as heat, and so it warms up.</p>
+      <p>Similarly, when the planet is below the point of intersection, the solar flux exceeds its heat flux. Now, it gains more energy from the Sun than it can shed as heat, and so it warms up.</p>
 
-      <p>Once the planet reaches the intersection point, the solar and heat flux exactly balance. At this special point, where the two curves meet, the planet's temperature remains steady. So this intersection point gives us a way to predict a planet's temperature. </p>
+      <p>Once the planet reaches the intersection point, the solar and heat flux exactly balance. At this special point where the line meets the curve, the planet's temperature remains steady. So this intersection point gives us a way to predict a planet's temperature. </p>
 
       <p>So here's that graph again.</p>
 
-      <graph :maxtemp="255" :solarflux="110"></graph>
+      <graph :maxtemp="255" :solarflux="['Mars']"></graph>
 
       <p>Go ahead and use this to predict Mars's temperature. You can drag over any region of the graph to zoom in. If you end up zooming too far, press the autoscale button on the top right.</p>
 
@@ -75,7 +75,7 @@
 
           <p>In the graph below, the dot shows the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html"><i>actual value</i></a> of Mars's temperature.</p>
 
-          <graph :maxtemp="255" :solarflux="110" :planets="planets"></graph>
+          <graph :maxtemp="255" :solarflux="['Mars']" :showplanets="true"></graph>
 
           <p>We nailed it! Mars's temperature lines up closely with our prediction.</p>
 
@@ -83,7 +83,7 @@
 
           <p>Emboldened by this success, let's try Earth next. We know that Earth receives 240 W/m² of solar energy. So once again, let's draw a horizontal line at that value.</p>
 
-          <graph :maxtemp="305" :solarflux="240" ></graph>
+          <graph :maxtemp="305" :solarflux="['Earth']" ></graph>
 
           <p>Just as before, the intersection point gives us a prediction for Earth's temperature.</p>
 
@@ -105,11 +105,11 @@
 
               <p>How did we do? The graph below shows the observed temperatures of Earth and Mars.</p>
 
-              <graph :maxtemp="305" :solarflux="240" :planets="planets"></graph>
+              <graph :maxtemp="305" :solarflux="['Earth', 'Mars']" :showplanets="true"></graph>
 
               <p>While our prediction for Mars's temperature was right on target, we're badly off the mark with Earth's temperature.</p>
 
-              <p>This is because we've neglected to account for the greenhouse effect. While this assumption works well for Mars, with its very thin atmosphere, it doesn't work at all for Earth. Earth is much warmer than a rock with no atmosphere, which is why it sits further to the right in the graph.</p>
+              <p>This is because we've neglected to account for the greenhouse effect. While this assumption works well for Mars, with its very thin atmosphere, it doesn't seem to work for the Earth. Earth is much warmer than a rock with no atmosphere, which is why it sits further to the right in the graph.</p>
 
               <p>The temperature difference between Earth's observed temperature and our prediction is 33°C – that's how far to the right the dot lies from the intersection point. The reason for this difference is our greenhouse effect.</p>
 
@@ -117,12 +117,11 @@
 
               <p>The good news is, we can easily fix our planetary heat curve to account for the greenhouse effect. The greenhouse effect reduces the flow of heat from the Earth to space, similar to how a partially clogged drain reduces the flow of water. In essence, the greenhouse effect <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">clogs Earth’s ‘heat drain’</a>.</p>
 
-              <p>The simplest way to model this would be to multiply our graph by a number between 0 and 1. Let’s call this number ϵ. This number represents how much of the planet's heat escapes to space.</p>
+              <p>The simplest way to model this would be to multiply our planetary heat curve by a number between 0 and 1. Let’s call this number ϵ. This number represents how much of the planet's heat escapes to space.</p>
 
-              <p>If ϵ is 1, then all the planet's heat escapes to space. We've 'switched off' the greenhouse effect.</p>
+              <p>If ϵ is 1, then *all* of the planet's heat escapes to space. We've 'switched off' the greenhouse effect.</p>
 
-
-              <p>But as ϵ decreases, we start turning up the greenhouse effect, as more and more of the planet's heat is trapped by the atmosphere. We're clogging Earth's heat drain.</p>
+              <p>But as ϵ decreases, we start turning up the greenhouse effect, as more and more of the planet's heat gets trapped by the atmosphere. We're clogging Earth's heat drain.</p>
 
               <p>Here, go ahead and try it for yourself.</p>
 
@@ -131,7 +130,7 @@
               <p><input type="range" min="0" max="1" step="0.005" v-model.number="e" debounce="500"></input> <button @click="e -= 0.005">-</button> <button @click="e += 0.005">+</button>  <input v-model.number="e" style="width:40px"></p>
 
               <p>Fraction of heat escaping through the atmosphere: {{Math.round(1000 * e)/10}}%</p>
-              <graph :maxtemp="350" :e="e" :planets="planets"></graph>
+              <graph :maxtemp="350" :e="e" :showplanets="true"></graph>
 
 
               <div v-if="e > 0 && e < 1">
@@ -146,15 +145,15 @@
 
                   <p>Now that you've tuned the heat curve for Earth, it no longer works for the other planets. You've customized this model for the Earth's greenhouse effect.</p>
 
-                  <p>So we've arrived at a simple climate model that accounts for Earth's greenhouse effect. This is a <a href="https://en.wikipedia.org/wiki/Toy_model">toy model</a>, meaning that it helps us build intuition, and gives us a foothold for understanding the basic principles involved. However, it's <i>way</i> less sophisticated than any “real world” climate model, and shouldn't be used to make any serious predictions.</p>
+                  <p>So we've arrived at a simple climate model that accounts for Earth's greenhouse effect. This is a <a href="https://en.wikipedia.org/wiki/Toy_model">toy model</a>, meaning that it helps us build intuition, and gives us a foothold for understanding the basic principles involved. However, it's <i>way</i> less sophisticated than any “real world” climate models, and shouldn't be used to make any serious predictions.</p>
 
-                  <p>Using this model, we can take a stab at understanding Earth's climate sensitivity. The <b><a href="https://en.wikipedia.org/wiki/Climate_sensitivity">climate sensitivity</a></b> is how much Earth's temperature will increase if we double carbon dioxide levels.</p>
+                  <p>But we can push it a bit further. Using this model, we can take a stab at understanding Earth's climate sensitivity. The <b><a href="https://en.wikipedia.org/wiki/Climate_sensitivity">climate sensitivity</a></b> is how much Earth's temperature will increase if we double carbon dioxide levels.</p>
 
                   <h2>Doubling CO₂ levels</h2>
 
                   <p>So far, we've been considering Earth in its pre-industrial state. What happens when we add a massive amount of carbon dioxide into the mix?</p>
 
-                  <p>Climate scientists tell us that doubling the levels of CO₂ in our atmosphere will add 3.7 W/m² to our incoming energy flow. Because of this, the planet will no longer be in energy balance. Instead, there'd be more energy flowing into the Earth than escaping through heat, and so the planet <a href="https://rateofchange.substack.com/p/dark-heat-and-earths-energy-imbalance">starts to</a> <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">warm up</a>.</p>
+                  <p>Climate scientists tell us that doubling the levels of CO₂ in our atmosphere will add 3.7 W/m² to our incoming energy flow. Because of this, the planet will no longer be in energy balance. Instead, there'd be more energy flowing in than escaping through heat, and so the planet <a href="https://rateofchange.substack.com/p/dark-heat-and-earths-energy-imbalance">warms</a> <a href="https://rateofchange.substack.com/p/clogging-earths-heat-drain">up</a>.</p>
 
                   <p>As the planet warms, its outgoing heat flow also rises. Eventually, it'll settle into a new, warmer temperature, where the energy is in balance once again.</p>
 
@@ -162,15 +161,17 @@
 
                   <iframe src="https://aatishb.com/climatetoy/temperaturecurveinteractive2/" style="width: 600px; height: 320px; margin: 10px 50px;"></iframe>
 
-                  <p>Changing the incoming energy flow into a planet is a lot like adjusting a thermostat. Just as setting a thermostat ensures that your home will eventually reach a target temperature, by adding CO₂ and shifting Earth's energy balance, we're adjusting Earth's thermostat. It'll take some time for Earth's temperature to respond to this new setting.</p>
+                  <p>Changing the energy flow into a planet is a lot like adjusting a thermostat. Just as dialing up the thermostat setting ensures that your home will warm up, adding CO₂ has the same effect on Earth's thermostat. And while it might take half an hour for the temperature in your home to fully respond to the thermostat, it'll take many years for Earth's temperature to fully respond to the CO₂ levels that we're dialing in.</p>
 
-                  <p>The big question is, exactly how much would doubling CO₂ levels eventually warm the Earth? Here's another way to ask the same question. If we a took an upwards step of 3.7 W/m² in this graph, how far to the right would we also end up? This rightwards shift – the resultant temperature rise – is our toy model's prediction for Earth's climate sensitivity.</p>
+                  <!-- <p>Changing the incoming energy flow into a planet is a lot like adjusting a thermostat. Just as setting a thermostat ensures that your home will eventually reach a target temperature, by adding CO₂ and shifting Earth's energy balance, we're adjusting Earth's thermostat. It'll take some time for Earth's temperature to respond to this new setting.</p> -->
+
+                  <p>The big question is, exactly how much would doubling CO₂ levels eventually warm the Earth? Here's another way to ask the same question. If we a took an upwards step of 3.7 W/m² in this graph, how far to the right would we also end up? This rightwards shift – the resultant temperature rise – is our model's prediction for Earth's climate sensitivity.</p>
 
                   <img src="sensitivity.png" alt="Climate Sensitivity" style="width: 600px; height: 320px; margin: 10px 50px;">
 
                   <p>Try it out for yourself. Here's that graph of Earth's planetary heat curve. Go ahead and zoom in to the region of the graph in the immediate vicinity of Earth.</p>
 
-                  <graph :maxtemp="350" :e="e" :planets="planets"></graph>
+                  <graph :maxtemp="350" :e="e" :showplanets="true"></graph>
 
                   <p>Once you're sufficiently zoomed in, place your mouse over Earth and notice its temperature and energy flow. Then move your mouse up the curve to a point where the energy flow has risen by roughly 3.7 W/m².</p>
 
@@ -190,19 +191,23 @@
 
                       <p>How does this prediction compare to what's already known?</p>
 
-                      <p>Climate scientists’ current <a href="https://en.wikipedia.org/wiki/Climate_sensitivity#Intergovernmental_Panel_on_Climate_Change">best estimates</a> tell us that the rise in temperature from a CO₂ doubling will be between 1.5 to 4.5°C. If we take the middle of this range, that’s 3°C.</p>
+                      <p>Climate scientists’ <a href="https://en.wikipedia.org/wiki/Climate_sensitivity#Intergovernmental_Panel_on_Climate_Change">estimate</a> that the rise in temperature from a CO₂ doubling will be between 1.5 to 4.5°C. If we take the middle of this range, that’s 3°C.</p>
 
                       <p>So we’ve underestimated Earth’s climate sensitivity by a fair amount. This might come as a disappointment after all that work.</p>
 
-                      <p>Indeed, if we look at the facts today, it seems clear that our prediction must be an underestimate. Even though we're currently about halfway to CO₂ doubling, average global temperatures have already risen by about a degree.</p>
+                      <p>Indeed, if we look at the facts today, it seems clear that our prediction <i>must be</i> an underestimate. Even though we're currently about halfway to a CO₂ doubling, average global temperatures have already risen by about a degree.</p>
 
                       <p>However, we’ve still learnt something useful. We’ve shown that <i>if all else were to remain the same</i>, a doubling of carbon dioxide <i>would</i> lead to roughly 1°C of warming, which is a <a href="http://shadow.eas.gatech.edu/~kcobb/warming_papers/Hansen_etal_1984.pdf">very</a> <a href="https://en.wikipedia.org/wiki/Climate_sensitivity#Different_forms_of_climate_sensitivity">well</a> <a href="http://www.pik-potsdam.de/~stefan/Publications/Book_chapters/Rahmstorf_Zedillo_2008.pdf">known</a> <a href="http://www.atmos.albany.edu/facstaff/brose/classes/ATM623_Spring2015/Notes/Lectures/Lecture03%20--%20Climate%20sensitivity%20and%20feedback.html">result</a> (and it’s cool that we could reproduce it!)</p>
 
                       <p>In reality, all else <b><i>doesn’t</i></b> remain the same.</p>
 
+                      <h2>What are we missing?</h2>
+
                       <p>The reason our estimate is much lower than what climate scientists predict is that we’ve neglected all of the important feedbacks in Earth’s climate system!</p>
 
-                      <p>We assumed that an increase in CO₂ causes a rise in temperature, end of story. In reality, this temperature increase has further consequences, like an increase in water vapor in the air, or accelerating the melting of ice caps, or more clouds. And these changes then further alter Earth's energy imbalance. This is what we mean by <i><a href="https://en.wikipedia.org/wiki/Climate_change_feedback">climate feedbacks</a></i>, and it’s these feedbacks that complicate our story.</p>
+                      <p>We assumed that an increase in carbon dioxide causes a rise in temperature, end of story. In reality, this temperature increase has further consequences, like increasing the water vapor in the air, or melting ice caps, or creating more clouds. Together these changes shift the temperature even further.</p>
+
+                      <p>It's almost as if whenever you raised the temperature on your thermostat by one degree, your house decided to turn it up a few degrees more. This is what we mean by <i><a href="https://en.wikipedia.org/wiki/Climate_change_feedback">climate feedbacks</a></i>, and it’s these feedbacks that complicate our story.</p>
 
                       <p>In an upcoming newsletter, we’ll dig into the science of how feedbacks work, and improve our prediction by accounting for these feedbacks. Along the way, we’ll also understand why it’s so difficult to make highly precise climate predictions.</p>
 
