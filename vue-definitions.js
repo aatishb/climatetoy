@@ -1,59 +1,4 @@
-// Defines a Vue <p5> Component
-
-Vue.component('p5', {
-
-  template: '<div></div>',
-
-  props: ['src','data'],
-
-  methods: {
-    // loadScript from https://stackoverflow.com/a/950146
-    // loads the p5 javscript code from a file
-    loadScript: function (url, callback)
-    {
-      // Adding the script tag to the head as suggested before
-      var head = document.head;
-      var script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = url;
-
-      // Then bind the event to the callback function.
-      // There are several events for cross browser compatibility.
-      script.onreadystatechange = callback;
-      script.onload = callback;
-
-      // Fire the loading
-      head.appendChild(script);
-    },
-
-    loadSketch: function() {
-      this.myp5 = new p5(sketch(this));
-    }
-  },
-
-  data: function() {
-    return {
-      myp5: {}
-    }
-  },
-
-  mounted() {
-    this.loadScript(this.src, this.loadSketch);
-  },
-
-  watch: {
-    data: {
-      handler: function(val, oldVal) {
-        if(this.myp5.dataChanged) {
-          this.myp5.dataChanged(val, oldVal);
-        }
-      },
-      deep: true
-    }
-  }
-
-})
-
+// custom graph component
 Vue.component('graph', {
 
   props: {
@@ -130,6 +75,7 @@ Vue.component('graph', {
 
   methods: {
 
+    // draws the graph
     makeGraph: function () {
       Plotly.newPlot(this.$refs.graph, this.plotData, this.layout);
     },
@@ -159,6 +105,7 @@ Vue.component('graph', {
 
 
   computed: {
+    // computes plot traces
     plotData: function() {
 
       let plots = [];
@@ -224,6 +171,7 @@ Vue.component('graph', {
 
   },
 
+  // recreate graph when e changes
   watch: {
     e: function() {
       this.makeGraph();
@@ -233,7 +181,7 @@ Vue.component('graph', {
 
 })
 
-
+// global data
 let app = new Vue({
 
   el: '#root',
@@ -243,15 +191,6 @@ let app = new Vue({
     marstemp: 0,
     earthtemp: 0,
     ecs: 0
-  },
-
-  methods: {
-  },
-
-  computed: {
   }
 
 })
-
-
-
