@@ -1,11 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <title>Climate Toy</title>
+
   <script src="./libraries/vue.js"></script>
   <script src="./libraries/plotly.min.js"></script>
   <script src="./libraries/p5.min.js"></script>
   <link rel="stylesheet" type="text/css" href="normalize.css">
   <link rel="stylesheet" type="text/css" href="style.css">
+
+  <!-- Social Media Descriptions -->
+  <meta name="description" content="An explorable toy model of Earth's climate." />
+
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@aatishb">
+  <meta name="twitter:title" content="Climate Toy">
+  <meta name="twitter:description" content="An explorable toy model of Earth's climate.">
+  <meta name="twitter:image" content="sensitivity.png">
+
+  <!-- Open Graph data -->
+  <meta property="og:title" content="Climate Toy" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://aatishb.com/climatetoy/" />
+  <meta property="og:image" content="https://aatishb.com/climatetoy/sensitivity.png" />
+  <meta property="og:description" content="An explorable toy model of Earth's climate." />
+
 </head>
 <body>
 
@@ -41,7 +61,7 @@
 
       <iframe src="https://aatishb.com/climatetoy/temperaturecurveinteractive/" style="width: 600px; height: 320px; margin: 10px 50px;"></iframe>
 
-      <p><b>Drag the planet to a different temperature</b> and see what happens.</br> (right = hotter, left = colder)</p>
+      <p><b>Drag the planet to a different temperature</b> and see what happens.<br> (right = hotter, left = colder)</p>
 
       <p>See how the planet always ends up at the point where the two curves intersect? Why does this happen?</p>
 
@@ -236,8 +256,6 @@
   <!-- page code -->
   <script src="vue-components.js"></script>
   <script src="vue-definitions.js"></script>
-
-</script>
 
 </body>
 </html>
